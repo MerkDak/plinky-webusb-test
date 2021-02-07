@@ -8,7 +8,7 @@
 	let port;
 	let inref;
 	let outref;
-	
+
 	async function connect() {
 
 		if (port) {
@@ -33,6 +33,12 @@
 		port.send(new TextEncoder('utf-8').encode(inref.value));
 	}
 
+	let sliderValue;
+
+	function sliderChange() {
+		console.log(sliderValue);
+	}
+
 </script>
 
 <main>
@@ -46,6 +52,8 @@
 	</form>
 
 	<textarea bind:this={outref}></textarea>
+
+	<input type="range" bind:value={sliderValue} on:change={sliderChange} />
 
 </main>
 
