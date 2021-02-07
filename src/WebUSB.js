@@ -5,6 +5,9 @@ export class Port {
     this.interfaceNumber = 0;
     this.endpointIn = 0;
     this.endpointOut = 0;
+    this.queue = [];
+    this.transferInflight = false
+    this.startQueue()
   }
 
   onReceive(data) {}
@@ -109,6 +112,39 @@ export class Port {
   send(data) {
     return this.device.transferOut(this.endpointOut, data);
   };
+  
+  queueMessage (data) {
+    if (queue.length > 5000) return console.warn('You have queued too many messages, have more chill')
+    this.queue.push(data);
+  }
+  
+  async processQueue () {
+    // bounce if there's nothing left to do
+    if (this.queue.length === 0) return;
+    // bounce if we're already sending something and it hasn't been accepted yet
+    if (this.transferInflight) return;
+    
+    this.transferInflight = true
+    
+    const data = this.queue.shift();
+    try {
+      await this.send(data)
+    } catch (e) {
+      console.error(e)
+      this.queue.unshift(data) // naive retry.
+    }
+    
+    this.transferInflight = false
+  }
+  
+  startQueue () {
+    stopQueue()
+    this.queueInterval = setInterval(this.processQueue.bind(this), 1);
+  }
+  
+  stopQueue () {
+    if (this.queueInterval) clearInterval(this.queueInterval)
+  }
 
 }
 
