@@ -1,3 +1,6 @@
+/**
+ * WebUSB port
+ */
 export class Port {
 
   constructor(device) {
@@ -12,16 +15,26 @@ export class Port {
 
   setEndpoints() {
 
+    // Go through all the interfaces in this device configuration.
     let interfaces = this.device.configuration.interfaces;
 
     console.log("Interfaces", this.device.configuration.interfaces);
 
-    interfaces.forEach(element => { console.log("Element", element); element.alternates.forEach(elementalt => {
+    interfaces.forEach(element => {
+      
+      console.log("Element", element);
+
+      // Element alternates - these are the *real* elements
+      // that we want to connect to.
+      element.alternates.forEach(elementalt => {
 
       if (elementalt.interfaceClass==0xFF) {
 
         this.interfaceNumber = element.interfaceNumber;
 
+        // Alternates have endpoints, that we then attach to
+        // so we can communicate with the device through
+        // a shared pointer.
         elementalt.endpoints.forEach(elementendpoint => {
 
           if (elementendpoint.direction == "out") {
@@ -58,26 +71,34 @@ export class Port {
 
     try {
 
+      // Open the WebUSB device connection
       await this.device.open();
 
+      // Select the passe configuration to that device
+      // It is 1 as we are only interested in the first one.
+      // We are only connecting to one device here.
       if (this.device.configuration === null) {
         return this.device.selectConfiguration(1);
       }
 
+      // Set the endpoint for that device.
       await this.setEndpoints();
 
       console.log("Interface number:", this.interfaceNumber);
       console.log("Configuration:", this.device.configuration);
 
+      // Claim the interface to be in use by this app.
       await this.device.claimInterface(this.interfaceNumber);
 
       try {
+        // ??? leftover?
         //await this.device.selectAlternateInterface(this.interfaceNumber, 0);
       }
       catch(err) {
         console.error('BOO!!! this.device.selectAlternateInterface() failed');
       }
 
+      // Send some dummy data and wait for response
       await this.device.controlTransferOut({
           'requestType': 'class',
           'recipient': 'interface',
@@ -85,6 +106,7 @@ export class Port {
           'value': 0x01,
           'index': this.interfaceNumber});
 
+      // Start the read loop defined above
       readLoop();
       
     }

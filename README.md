@@ -1,105 +1,52 @@
-*Looking for a shareable component template? Go here --> [sveltejs/component-template](https://github.com/sveltejs/component-template)*
+# Plinky WebUSB playground
 
----
+## How this works
 
-# svelte app
+We have abstractions of the `Port` and `Serial` classes.
 
-This is a project template for [Svelte](https://svelte.dev) apps. It lives at https://github.com/sveltejs/template.
+### `Serial` class
 
-To create a new project based on this template using [degit](https://github.com/Rich-Harris/degit):
+The `Serial` class handles:
 
-```bash
-npx degit sveltejs/template svelte-app
-cd svelte-app
-```
+- Getting a list of available ports (WebUSB devices)
+- Requesting access to one of those ports
 
-*Note that you will need to have [Node.js](https://nodejs.org) installed.*
-
-
-## Get started
-
-Install the dependencies...
-
-```bash
-cd svelte-app
-npm install
-```
-
-...then start [Rollup](https://rollupjs.org):
-
-```bash
-npm run dev
-```
-
-Navigate to [localhost:5000](http://localhost:5000). You should see your app running. Edit a component file in `src`, save it, and reload the page to see your changes.
-
-By default, the server will only respond to requests from localhost. To allow connections from other computers, edit the `sirv` commands in package.json to include the option `--host 0.0.0.0`.
-
-If you're using [Visual Studio Code](https://code.visualstudio.com/) we recommend installing the official extension [Svelte for VS Code](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode). If you are using other editors you may need to install a plugin in order to get syntax highlighting and intellisense.
-
-## Building and running in production mode
-
-To create an optimised version of the app:
-
-```bash
-npm run build
-```
-
-You can run the newly built app with `npm run start`. This uses [sirv](https://github.com/lukeed/sirv), which is included in your package.json's `dependencies` so that the app will work when you deploy to platforms like [Heroku](https://heroku.com).
-
-
-## Single-page app mode
-
-By default, sirv will only respond to requests that match files in `public`. This is to maximise compatibility with static fileservers, allowing you to deploy your app anywhere.
-
-If you're building a single-page app (SPA) with multiple routes, sirv needs to be able to respond to requests for *any* path. You can make it so by editing the `"start"` command in package.json:
+Connecting to a WebUSB device means passing the `WebUSBPlinky` constructor that extends `Port` to `Serial.requestPort()`:
 
 ```js
-"start": "sirv public --single"
+let port;
+
+try {
+  port = await Serial.requestPort(WebUSBPlinky);
+  await port.connect();
+}
+catch(err) {
+  console.error(err);
+}
 ```
 
-## Using TypeScript
+### `Port` class
 
-This template comes with a script to set up a TypeScript development environment, you can run it immediately after cloning the template with:
+The `Port` superclass handles:
 
-```bash
-node scripts/setupTypeScript.js
-```
+In the `connect()` function:
+- Defining the read loop
+- Opening the device
+- Setting the [endpoint](https://wicg.github.io/webusb/#endpoints)
+- Selecting the device configuration
+- Getting the endpoint alternates so they can be accessed via shared pointers
+- Claiming the device
+- Starting the read loop
 
-Or remove the script via:
+Whenever the read loop receives data, it calls the `onReceive` function, which is implemented in the `WebUSBPlinky.js` file. If there is an error, it calls the `onReceiveError` function.
 
-```bash
-rm scripts/setupTypeScript.js
-```
+### `WebUSBPlinky` class
 
-## Deploying to the web
+The `WebUSBPlinky` class implements:
 
-### With [Vercel](https://vercel.com)
+- `onReceive`
+- `onReceiveError`
 
-Install `vercel` if you haven't already:
+### `WebPlinky` class
 
-```bash
-npm install -g vercel
-```
-
-Then, from within your project folder:
-
-```bash
-cd public
-vercel deploy --name my-project
-```
-
-### With [surge](https://surge.sh/)
-
-Install `surge` if you haven't already:
-
-```bash
-npm install -g surge
-```
-
-Then, from within your project folder:
-
-```bash
-npm run build
-surge public my-project.surge.sh
-```
+This class handles the abstraction and finite state machine to interface with Plinky through `WebUSBPlinky`. It is used to wire up the UI to the machine.

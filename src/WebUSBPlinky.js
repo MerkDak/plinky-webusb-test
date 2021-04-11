@@ -1,12 +1,27 @@
 import { Port } from './WebUSB';
 
+function toHex(str,hex){
+  try{
+    hex = unescape(encodeURIComponent(str))
+    .split('').map(function(v){
+      return v.charCodeAt(0).toString(16)
+    }).join('')
+  }
+  catch(e){
+    hex = str
+    console.log('invalid text input: ' + str)
+  }
+  return hex
+}
+
 export class WebUSBPlinky extends Port {
 
   onReceive(data) {
 
     let textDecoder = new TextDecoder();
-    console.log(textDecoder.decode(data));
-    if(this.outref) this.outref.value = textDecoder.decode(data)
+    console.log("RESPONSE:", textDecoder.decode(data), toHex(textDecoder.decode(data)));
+
+    if(this.outref) this.outref.value = toHex(textDecoder.decode(data));
     if (data.getInt8() === 13) {
       //currentReceiverLine = null;
     } else {
@@ -20,3 +35,19 @@ export class WebUSBPlinky extends Port {
   }
 
 }
+
+/*
+export class WebPlinky {
+
+  constructor({
+    PlinkyDevice
+  }) {
+
+    this.PlinkyDevice = PlinkyDevice;
+
+  }
+
+  
+
+}
+*/
