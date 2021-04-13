@@ -1,16 +1,17 @@
 /**
  * WebUSB port
  */
-export class Port {
+export class Port extends EventTarget {
 
   constructor(device) {
+    super();
     this.device = device;
     this.interfaceNumber = 0;
     this.endpointIn = 0;
     this.endpointOut = 0;
     this.queue = [];
     this.transferInflight = false
-    this.startQueue()
+    //this.startQueue();
   }
 
   onReceive(data) {}
@@ -95,13 +96,12 @@ export class Port {
 
       try {
         // ??? leftover?
-        //await this.device.selectAlternateInterface(this.interfaceNumber, 0);
+        await this.device.selectAlternateInterface(this.interfaceNumber, 0);
       }
       catch(err) {
         console.error('BOO!!! this.device.selectAlternateInterface() failed');
       }
 
-      // Send some dummy data and wait for response
       await this.device.controlTransferOut({
           'requestType': 'class',
           'recipient': 'interface',
@@ -114,9 +114,7 @@ export class Port {
       
     }
     catch(error) {
-
       console.error(error);
-
     }
 
   }
@@ -132,6 +130,7 @@ export class Port {
   };
 
   send(data) {
+    console.log('sending', data, this.endpointOut);
     return this.device.transferOut(this.endpointOut, data);
   };
   
@@ -160,7 +159,7 @@ export class Port {
   }
   
   startQueue () {
-    stopQueue()
+    this.stopQueue()
     this.queueInterval = setInterval(this.processQueue.bind(this), 1);
   }
   

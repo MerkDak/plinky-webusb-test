@@ -1,7 +1,7 @@
 <script>
 
 	import { onMount } from "svelte";
-	import { createPlinkyMachine } from "./lib/PlinkyMachine";
+	import { PlinkyManager } from "./lib/PlinkyManager";
 	export let name;
 
 	let port;
@@ -9,11 +9,11 @@
 	let inarrbufref;
 	let outref;
 
-	const plinkyMachine = createPlinkyMachine();
-	const [store, send] = plinkyMachine;
+	const plinky = new PlinkyManager();
+	const { store, send } = plinky.service;
 
 	async function connect() {
-		send('connect');
+		await plinky.connect();
 	}
 
 	function sendArrayBuffer() {
@@ -25,10 +25,8 @@
 		port.send(new Uint8Array([0xf3,0x0f,0xab,0xca,0,32,0,0,0,0]));
 	}
 
-
 	function getPatch() {
-		console.log($store);
-		send('load', 'foo');
+		plinky.loadPatch();
 	}
 
 	$: connected = ['connected', 'loadPatch', 'loadingPatch', 'savePatch'].indexOf($store.state) > -1;
@@ -39,7 +37,6 @@
 	<h1>Current state: {$store.state}</h1>
 
 	<button style="display: {!connected ? 'block' : 'none'}" on:click={connect}>Connect</button>
-
 	<div style="display: {connected ? 'block' : 'none'}">
 
 		<h2>Get patch</h2>
