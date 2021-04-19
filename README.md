@@ -46,9 +46,9 @@ The `WebUSBPlinky` class implements:
 - `onReceive`
 - `onReceiveError`
 
-### `PlinkyManager` class
+### `PlinkyMachine`
 
-This class contains the abstraction and state machine (`PlinkyMachine`) to interface with Plinky through `WebUSBPlinky`. It is used to wire up the UI to the machine.
+State machine to interface with Plinky through `WebUSBPlinky`. It is used to wire up the UI to the machine.
 
 `PlinkyMachine` has these states:
 
@@ -59,5 +59,8 @@ This class contains the abstraction and state machine (`PlinkyMachine`) to inter
 - savePatch
 - error
 
-They should be pretty self-explanatory. The loadPatch and savePatch states invoke their own sub-machines, so you can keep track of the overall state easier. Look at the `PlinkyManager` to see how to interface with it.
+They should be pretty self-explanatory. The loadPatch and savePatch states invoke their own child machines, so you can keep track of the overall state easier in the UI.
 
+### `PatchMachines`
+
+This file contains the child machines for patch loading and saving.

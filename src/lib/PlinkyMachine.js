@@ -1,4 +1,4 @@
-import { Port, Serial } from './webusb/WebUSB';
+import { Port, Serial } from './WebUSB';
 import {
   action,
   createMachine,
@@ -17,7 +17,7 @@ import { PatchLoadMachine } from './PatchMachines';
 
 const patchLoadMachine = createMachine(PatchLoadMachine, (ctx) => ({ ...ctx }));
 
-export class USBPlinky extends Port {
+export class WebUSBPlinky extends Port {
 
   onReceive(data) {
     console.log('Port data:', data.buffer);
@@ -52,21 +52,27 @@ function parseJSONFromPatch(patch) {
   // each parameter has 16 bytes;
   // first 2 bytes are the value, then the 7 mod matrix amounts
   EParams.forEach((param, index) => {
+    // We have 16 bytes that we're looking at
     const len = 16;
+    // Index to start slicing at
     const idx = index * len;
+    // We have 16 bytes in the ArrayBuffer that we want
     const buf = patch.slice(idx, len*index+len);
-    console.log(param, len, idx, "BUF", buf);
+    // Then convert it to an Int16Array to get range of -1024 to 1024
+    // without having to do messy bit operations by hand! woot!
+    const arr = new Int16Array(buf);
+    console.log(param, len, idx, "BUF", buf, arr);
     JSONPatch.push({
       name: param,
-      value: buf[0]+buf[1],
+      value:      arr[0],
       mods: {
-        env:      buf[2]+buf[3],
-        pressure: buf[4]+buf[5],
-        a:        buf[6]+buf[7],
-        b:        buf[8]+buf[9],
-        x:        buf[10]+buf[11],
-        y:        buf[12]+buf[13],
-        random:   buf[14]+buf[15],
+        env:      arr[1],
+        pressure: arr[2],
+        a:        arr[3],
+        b:        arr[4],
+        x:        arr[5],
+        y:        arr[6],
+        random:   arr[7],
       }
     });
   });
@@ -74,9 +80,13 @@ function parseJSONFromPatch(patch) {
 }
 
 async function connect(ctx) {
-  ctx.port = await Serial.requestPort(USBPlinky);
+  ctx.port = await Serial.requestPort(WebUSBPlinky);
   await ctx.port.connect();
   return ctx;
+}
+
+function typedArrayToBuffer(array) {
+  return array.buffer.slice(array.byteOffset, array.byteLength + array.byteOffset)
 }
 
 export function createPlinkyMachine(initialContext = {}) {
@@ -109,7 +119,8 @@ export function createPlinkyMachine(initialContext = {}) {
       patchLoadMachine,
       transition('done', 'connected', reduce((ctx, ev) => {
         const patch = Uint8Array.from(Array.prototype.concat(...ev.data.result.map(a => Array.from(a))));
-        const patchJSON = parseJSONFromPatch(patch);
+        const arrayBuffer = patch.buffer.slice(patch.byteOffset, patch.byteLength + patch.byteOffset);
+        const patchJSON = parseJSONFromPatch(arrayBuffer);
         return { ...ctx, patch, patchJSON };
       })),
       transition('error', 'error', reduce((ctx, ev) => {

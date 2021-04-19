@@ -31,8 +31,21 @@
 		});
 	}
 
+	const paramMin = -100;
+	const paramMax = 100;
+	const xMin = -1024;
+	const xMax = 1024;
+
+	function normalise(x) {
+		return (paramMax - paramMin) * ((x-xMin)/(xMax - xMin)) + paramMin;
+	}
+
 	$: connected = ['connected', 'loadPatch', 'savePatch'].indexOf($store.state) > -1;
 	$: disabled = ['loadPatch', 'savePatch'].indexOf($store.state) > -1;
+
+	function round(num) {
+		return Math.round( num * 100 + Number.EPSILON ) / 100;
+	}
 
 </script>
 
@@ -57,9 +70,49 @@
 
 		<p>Loaded: {$store.context.patch.byteLength} bytes</p>
 
-		<ul>
+		<ul class="params">
 			{#each $store.context.patchJSON as param}
-				<li>{param.name} - {param.value}</li>
+				<li>
+					<h3>{param.name}</h3>
+					<div class="mods">
+						<table>
+							<tr>
+								<td>Base</td>
+								<td>{round(normalise(param.value))}%<br></td>
+							</tr>
+							<tr>
+								<td>Env</td>
+								<td>{round(normalise(param.mods.env))}%<br></td>
+							</tr>
+							<tr>
+								<td>Pressure</td>
+								<td>{round(normalise(param.mods.pressure))}%<br></td>
+							</tr>
+							<tr>
+								<td>A</td>
+								<td>{round(normalise(param.mods.a))}%<br></td>
+							</tr>
+						</table>
+						<table>
+							<tr>
+								<td>B</td>
+								<td>{round(normalise(param.mods.b))}%<br></td>
+							</tr>
+							<tr>
+								<td>X</td>
+								<td>{round(normalise(param.mods.x))}%<br></td>
+							</tr>
+							<tr>
+								<td>Y</td>
+								<td>{round(normalise(param.mods.y))}%<br></td>
+							</tr>
+							<tr>
+								<td>Random</td>
+								<td>{round(normalise(param.mods.random))}%<br></td>
+							</tr>
+						</table>
+					</div>
+				</li>
 			{/each}
 		</ul>
 	{:else}
@@ -69,6 +122,39 @@
 </main>
 
 <style>
+	.params {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr 1fr;
+		gap: 8px;
+		
+		margin: 0;
+		list-style: none;
+		padding: 0;
+	}
+	.params li {
+		border: 1px solid #ccc;
+		padding: 0;
+	}
+	.params li h3 {
+		background: rgb(235, 237, 195);
+		padding: 8px 16px;
+		margin: 0;
+		border-bottom: 1px solid #ccc;
+	}
+	.params li .mods {
+		display: grid;
+		padding: 16px;
+		grid-template-columns: 1fr 1fr;
+	}
+	.params li .mods table {
+		width: 100%;
+	}
+	.params li table td {
+		padding-right: 16px;
+		font-size: 14px;
+		line-height: 18px;
+		border-bottom: 1px solid #efefef;
+	}
 	main {
 		padding: 1em;
 		margin: 0 auto;
