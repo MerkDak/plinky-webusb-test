@@ -39,13 +39,6 @@ The `Port` superclass, in the `connect()` function, handles:
 
 Whenever the read loop receives data, it calls the `onReceive` function, which is implemented in the `WebUSBPlinky.js` file. If there is an error, it calls the `onReceiveError` function.
 
-### `WebUSBPlinky` class
-
-The `WebUSBPlinky` class implements:
-
-- `onReceive`
-- `onReceiveError`
-
 ### `PlinkyMachine`
 
 State machine to interface with Plinky through `WebUSBPlinky`. It is used to wire up the UI to the machine.
@@ -59,8 +52,25 @@ State machine to interface with Plinky through `WebUSBPlinky`. It is used to wir
 - savePatch
 - error
 
-They should be pretty self-explanatory. The loadPatch and savePatch states invoke their own child machines, so you can keep track of the overall state easier in the UI.
+They should be pretty self-explanatory. The `loadPatch` and `savePatch` states invoke their own child machines, so you can keep track of the overall state easier in the UI.
 
 ### `PatchMachines`
 
 This file contains the child machines for patch loading and saving.
+
+#### PatchLoadMachine
+
+This machine will send the header to get a whole patch from Plinky, process the header, check how many bytes it needs to read, then loops through the input data until it's satisfied.
+
+#### PatchSaveMachine
+
+This machine will send the header to save a patch to Plinky, then sends the data in 2*8 byte chunks.
+
+### `WebUSBPlinky` class
+
+The `WebUSBPlinky` class implements:
+
+- `onReceive`
+- `onReceiveError`
+
+Both will try to advance the `PlinkyMachine` directly through a `data` event. If the state is currently processing a child machine (in the `loadPatch` and `savePatch` state), it will try to advance the child machine.

@@ -49,6 +49,10 @@
 	}
 
 	function savePatch() {
+		send({
+			type: 'savePatch',
+			patchNumber: $store.context.patchNumber
+		});
 	}
 
 	function clearPatch() {
@@ -108,16 +112,30 @@
 	{#if $store.context.patch}
 
 		<button on:click|preventDefault={clearPatch}>Clear patch in browser memory</button>
+
+		<p>Loaded: {$store.context.patch.byteLength} bytes</p>
 		
+		<h3>Link to patch</h3>
 		<label for="i-link-url">Link:</label>
 		<input value={linkUrl} id="i-link-url">
 
-		<p>Loaded: {$store.context.patch.byteLength} bytes</p>
+		<h3>Params</h3>
+
+		<p>
+			Arp: {$store.context.patchJSON.arp}<br>
+			Latch: {$store.context.patchJSON.latch}<br>
+			Loop start: {$store.context.patchJSON.loopStart}<br>
+			Loop length: {$store.context.patchJSON.loopLength}<br>
+		</p>
 
 		<ul class="params">
-			{#each $store.context.patchJSON as param}
+			{#each $store.context.patchJSON.params as param}
 				<li>
 					<h3>{param.name}</h3>
+					<code>
+						hex: {Array.from(new Uint8Array(param.buffer)).map(a=> a.toString(16))}<br>
+						dec: {new Uint8Array(param.buffer).toString()}
+					</code>
 					<div class="mods">
 						<table>
 							<tr>
@@ -192,6 +210,11 @@
 	}
 	.params li .mods table {
 		width: 100%;
+	}
+	.params li code {
+		padding: 16px;
+		background: #f3e8f8;
+		display: block;
 	}
 	.params li table td {
 		padding-right: 16px;

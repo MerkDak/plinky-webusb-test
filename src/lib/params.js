@@ -98,5 +98,4 @@ export const EParams = [
   "P_SYS_UNUSED2",
   "P_SYS_UNUSED3",
   "P_ACCEL_SENS",
-  "P_LAST",
 ];

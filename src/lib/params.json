@@ -1,0 +1,848 @@
+[
+  {
+    "id": "P_PWM",
+    "min": 0,
+    "max": 127,
+    "cc": 13,
+    "description": ""
+  },
+  {
+    "id": "P_DRIVE",
+    "min": 0,
+    "max": 127,
+    "cc": 4,
+    "description": ""
+  },
+  {
+    "id": "P_PITCH",
+    "min": 0,
+    "max": 127,
+    "cc": 9,
+    "description": ""
+  },
+  {
+    "id": "P_OCT",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_GLIDE",
+    "min": 0,
+    "max": 127,
+    "cc": 5,
+    "description": ""
+  },
+  {
+    "id": "P_INTERVAL",
+    "min": 0,
+    "max": 127,
+    "cc": 14,
+    "description": ""
+  },
+  {
+    "id": "P_NOISE",
+    "min": -127,
+    "max": 127,
+    "cc": 2,
+    "description": ""
+  },
+  {
+    "id": "P_MIXRESO",
+    "min": 0,
+    "max": 127,
+    "cc": 71,
+    "description": ""
+  },
+  {
+    "id": "P_ROTATE",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_SCALE",
+    "min": 0,
+    "max": 26,
+    "cc": -1,
+    "name": "Scale",
+    "enum_id": [
+        "S_MAJOR",			
+        "S_MINOR",			
+        "S_HARMMINOR",		
+        "S_PENTA",			
+        "S_PENTAMINOR",		
+        "S_HIRAJOSHI",		
+        "S_INSEN",			
+        "S_IWATO",			
+        "S_MINYO",			
+        "S_FIFTHS",			
+        "S_TRIADMAJOR",		
+        "S_TRIADMINOR",		
+        "S_DORIAN",		
+        "S_PHYRGIAN",		
+        "S_LYDIAN",			
+        "S_MIXOLYDIAN",		
+        "S_AEOLIAN",		
+        "S_LOCRIAN",			
+        "S_BLUESMINOR",		
+        "S_BLUESMAJOR",		
+        "S_ROMANIAN",		
+        "S_WHOLETONE",		
+        "S_HARMONICS",
+        "S_HEXANY", 
+        "S_JUST",
+        "S_CHROMATIC",
+        "S_LAST"
+    ],
+    "enum_name": [
+        "Major",
+        "Minor",
+        "Harminoc Min",
+        "Penta Maj",
+        "Penta Min",
+        "Hirajoshi",
+        "Insen",
+        "Iwato",
+        "Minyo",
+        "Fifths",
+        "Triad Maj",
+        "Triad Min",
+        "Dorian",
+        "Phrygian",
+        "Lydian",
+        "Mixolydian",
+        "Aeolian",
+        "Locrian",
+        "Blues Min",
+        "Blues Maj",
+        "Romanian",
+        "Wholetone",
+        "Harmonics",
+        "Hexany",
+        "Just",
+        "Chromatic"
+    ],
+    "description": "Selects which scale of notes plinky uses"
+  },
+  {
+    "id": "P_MICROTUNE",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_STRIDE",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_SENS",
+    "min": 0,
+    "max": 1,
+    "default": 0.5,
+    "name": "Sensitivity",
+    "cc": 3,
+    "description": ""
+  },
+  {
+    "id": "P_A",
+    "min": 0,
+    "max": 127,
+    "cc": 73,
+    "description": ""
+  },
+  {
+    "id": "P_D",
+    "min": 0,
+    "max": 127,
+    "cc": 75,
+    "description": ""
+  },
+  {
+    "id": "P_S",
+    "min": 0,
+    "max": 127,
+    "cc": 74,
+    "description": ""
+  },
+  {
+    "id": "P_R",
+    "min": 0,
+    "max": 127,
+    "cc": 72,
+    "description": ""
+  },
+  {
+    "id": "P_ENV1_UNUSED",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_ENV_LEVEL",
+    "min": 0,
+    "max": 127,
+    "cc": 19,
+    "description": ""
+  },
+  {
+    "id": "P_A2",
+    "min": 0,
+    "max": 127,
+    "cc": 20,
+    "description": ""
+  },
+  {
+    "id": "P_D2",
+    "min": 0,
+    "max": 127,
+    "cc": 21,
+    "description": ""
+  },
+  {
+    "id": "P_S2",
+    "min": 0,
+    "max": 127,
+    "cc": 22,
+    "description": ""
+  },
+  {
+    "id": "P_R2",
+    "min": 0,
+    "max": 127,
+    "cc": 23,
+    "description": ""
+  },
+  {
+    "id": "P_ENV2_UNUSED",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_DLSEND",
+    "min": 0,
+    "max": 1,
+    "default": 0,
+    "name": "Delay Send",
+    "cc": 94,
+    "description": "Amount of the dry sound sent to the delay unit. Turn it up for echos!"
+  },
+  {
+    "id": "P_DLTIME",
+    "min": -1,
+    "max": 1,
+    "default": 0.375,
+    "cc": 12,
+    "name": "Delay Time",
+    "description": "The time between each echo. Positive values are un-quantized; negative values are multiples of the current tempo."
+  },
+  {
+    "id": "P_DLRATIO",
+    "min": 0,
+    "max": 1,
+    "default": 1,
+    "cc": -1,
+    "name": "Delay Ratio",
+    "description": "The delay unit is stereo. This moves the right tap to an earlier time, causing ping-pong poly-rhthmic repeats. Try simple ratios like 33%, 50%, 75%."
+  },
+  {
+    "id": "P_DLWOB",
+    "min": 0,
+    "max": 1,
+    "default": 0.25,
+    "name": "Delay Wobble",
+    "cc": -1,
+    "description": "Amount of simulated tape speed wobble, causing pitch distortions in the delay."
+  },
+  {
+    "id": "P_DLFB",
+    "min": 0,
+    "max": 1,
+    "default": 0.5,
+    "name": "Delay Feedback",
+    "cc": 95,
+    "description": "Amount of feedback - the volume of each echo reduces by this amount."
+  },
+  {
+    "id": "P_TEMPO",
+    "min": -1,
+    "max": 1,
+    "name": "BPM",
+    "remap": "120*Math.pow(2,x)",
+    "default": 0,
+    "cc": -1,
+    "description": "Tempo in BPM. You can also tap this parameter pad rhythmically to set the tempo."
+  },
+  {
+    "id": "P_RVSEND",
+    "min": 0,
+    "max": 1,
+    "name": "Reverb Send",
+    "default": 0.25,
+    "cc": 91,
+    "description": "Amount of the dry sound sent to the reverb unit. Turn it up for reverb!"
+  },
+  {
+    "id": "P_RVTIME",
+    "min": 0,
+    "max": 1,
+    "default": 0.5,
+    "name": "Reverb Time",
+    "cc": 92,
+    "description": "Reverb time. controls the length of the decay of the reverb."
+  },
+  {
+    "id": "P_RVSHIM",
+    "min": 0,
+    "max": 1,
+    "default": 0.25,
+    "name": "Shimmer",
+    "cc": 93,
+    "description": "Amount of octave-up signal that is fed into the reverb, causing a shimmer effect."
+  },
+  {
+    "id": "P_RVWOB",
+    "min": 0,
+    "max": 1,
+    "default": 0.25,
+    "name": "Reverb Wobble",
+    "cc": -1,
+    "description": "Amount of simulated tape speed wobble, causing pitch distortions in the reverb. Avoids metallic artefacts."
+  },
+  {
+    "id": "P_RVUNUSED",
+    "min": 0,
+    "max": 1,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_SWING",
+    "min": 0,
+    "max": 1,
+    "cc": -1,
+    "name": "Swing",
+    "description": "OUT OF ORDER. This parameter will be used to add swing in a future firmware update"
+  },
+  {
+    "id": "P_ARPONOFF",
+    "min": 0,
+    "max": 1,
+    "cc": 102,
+    "default": 0,
+    "name": "Arp on/off",
+    "description": "Switches the arpeggiator on and off."
+  },
+  {
+    "id": "P_ARPMODE",
+    "cc": 103,
+    "default": 0,
+  "min": 0,
+  "max": 15,
+  "name": "Arpeggiator Mode",
+    "enum_id": [
+      "ARP_UP",
+      "ARP_DOWN",
+      "ARP_UPDOWN",
+      "ARP_UPDOWNREP",
+      "ARP_PEDALUP",
+      "ARP_PEDALDOWN",
+      "ARP_PEDALUPDOWN",
+      "ARP_RANDOM",
+      "ARP_RANDOM2",
+      "ARP_ALL",
+      "ARP_UP8",
+      "ARP_DOWN8",
+      "ARP_UPDOWN8",
+      "ARP_RANDOM8",
+      "ARP_RANDOM28",
+      "ARP_LAST"
+    ],
+    "enum_name": [
+      "Up",
+      "Down",
+      "Up then Down",
+      "Up then Down (repeat end notes)",
+      "Up with lowest note pedal",
+      "Down with lowest note pedal",
+      "Up then down with lowest note pedal",
+      "Random",
+      "Random playing 2 notes at a time",
+      "Repeat all notes (polyphonic)",
+      "Up (all 8 columns)",
+      "Down (all 8 columns)",
+      "Up then Down (all 8 columns)",
+      "Random (all 8 columns)",
+      "Random, 2 notes at a time (all 8 columns)"
+    ],
+    "description": "Arpeggiator mode. The '8 column' modes include every column, even those without a note, introducing rests into the arpeggio."
+  },
+  {
+    "id": "P_ARPDIV",
+    "min": -1,
+    "max": 22,
+    "default": 0.09090909,
+    "name": "Arp Clock Divide",
+    "enum_id": [
+      "1","2", "3","4","5", "6","8","10", "12","16","20", "24","32","40", "48","64","80", "96","128","160", "192", "256" 
+    ],
+    "enum_name": [
+      "1/32","2/32", "3/32","4/32","5/32", "6/32","8/32","10/32", "12/32","16/32","20/32", "24/32","32/32","40/32", "48/32","64/32","80/32", "96/32","128/32","160/32", "192/32", "256/32" 
+    ],
+    "cc": -1,
+    "description": "Sets the speed of the arpeggiator. Negative numbers are un-quantized, positive numbers divide a 32nd note clock."
+  },
+  {
+    "id": "P_ARPPROB",
+    "min": 0,
+    "max": 1,
+    "default": 1,
+    "cc": -1,
+    "name": "Arp Probability / Density",
+    "description": "Sets the probability of the apreggiator progressing on each tick of its clock. If the Arp Length parameter is 0, this is a true random probability, otherwise it's the density of a Euclidean rhythm."
+  },
+  {
+    "id": "P_ARPLEN",
+    "min": -17,
+    "max": 17,
+    "default": 8,
+    "cc": -1,
+    "name": "Arp Pattern Length",
+    "description": "When non zero, this sets the length of the euclidean pattern used by the arp. Use the Arp probability parameter to change how many note are included in each pattern. Negative values treat rests differently, try both."
+  },
+  {
+    "id": "P_ARPOCT",
+    "min": 0,
+    "max": 4,
+    "default": 0,
+    "cc": -1,
+    "name": "Arp Octaves",
+    "description": "Sets how many octaves the arpeggiator ranges over."
+  },
+  {
+    "id": "P_LATCHONOFF",
+    "min": 0,
+    "max": 1,
+    "name": "Latch on/off",
+    "cc": -1,
+    "description": "Switches the latch on/off. When on, played notes will sustain even when you take your fingers off plinky. Useful for chords, arps, drones, or using plinky as an oscillator voice."
+  },
+  {
+    "id": "P_SEQMODE",
+    "min": 0,
+    "max": 6,
+    "name": "Sequencer Mode",
+    "default": 0,
+    "enum_id": [
+      "SEQ_PAUSE",
+      "SEQ_FWD",
+      "SEQ_BACK",
+      "SEQ_PINGPONG",
+      "SEQ_PINGPONGREP",
+      "SEQ_RANDOM",
+      "SEQ_LAST"    
+    ],
+    "enum_name": [
+      "Pause",
+      "Forwards",
+      "Backwards",
+      "Pingpong",
+      "Pingpong (repeat end notes)",
+      "Random"
+    ],
+    "cc": -1,
+    "description": "Sets the order that notes are played by the sequencer."
+  },
+  {
+    "id": "P_SEQDIV",
+    "min": 0,
+    "max": 22,
+    "default": 0.27272727,
+    "name": "Seq Clock Divide",
+    "enum_id": [
+      "1","2", "3","4","5", "6","8","10", "12","16","20", "24","32","40", "48","64","80", "96","128","160", "192", "256" 
+    ],
+    "enum_name": [
+      "1/32","2/32", "3/32","4/32","5/32", "6/32","8/32","10/32", "12/32","16/32","20/32", "24/32","32/32","40/32", "48/32","64/32","80/32", "96/32","128/32","160/32", "192/32", "256/32" 
+    ],
+    "cc": -1,
+    "description": "Sets the speed of the sequencer. Negative numbers are un-quantized, positive numbers divide a 32nd note clock."
+  },
+  {
+    "id": "P_SEQPROB",
+    "min": 0,
+    "max": 1,
+    "default": 1,
+    "cc": -1,
+    "name": "Seq Probability / Density",
+    "description": "Sets the probability of the sequencer progressing on each tick of its clock. If the Arp Length parameter is 0, this is a true random probability, otherwise it's the density of a Euclidean rhythm."
+  },
+  {
+    "id": "P_SEQLEN",
+    "min": -17,
+    "max": 17,
+    "default": 8,
+    "cc": -1,
+    "name": "Seq Pattern Length",
+    "description": "When non zero, this sets the length of the euclidean pattern used by the sequencer. Use the Seq Probability parameter to change how many note are included in each pattern. Negative values treat rests differently, try both."
+  },
+  {
+    "id": "P_GATE_LENGTH",
+    "min": 0,
+    "max": 127,
+    "cc": 11,
+    "description": ""
+  },
+  {
+    "id": "P_SMP_POS",
+    "min": 0,
+    "max": 127,
+    "cc": 15,
+    "description": ""
+  },
+  {
+    "id": "P_SMP_GRAINSIZE",
+    "min": 0,
+    "max": 127,
+    "cc": 16,
+    "description": ""
+  },
+  {
+    "id": "P_SMP_RATE",
+    "min": 0,
+    "max": 127,
+    "cc": 17,
+    "description": ""
+  },
+  {
+    "id": "P_SMP_TIME",
+    "min": 0,
+    "max": 127,
+    "cc": 18,
+    "description": ""
+  },
+  {
+    "id": "P_SAMPLE",
+    "min": 0,
+    "max": 127,
+    "cc": 82,
+    "description": ""
+  },
+  {
+    "id": "P_SEQPAT",
+    "min": 0,
+    "max": 127,
+    "cc": 83,
+    "description": ""
+  },
+  {
+    "id": "P_JIT_POS",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_JIT_GRAINSIZE",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_JIT_RATE",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_JIT_PULSE",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_JIT_UNUSED",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_SEQSTEP",
+    "min": 0,
+    "max": 127,
+    "cc": 85,
+    "description": ""
+  },
+  {
+    "id": "P_ASCALE",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_AOFFSET",
+    "min": 0,
+    "max": 127,
+    "cc": 24,
+    "description": ""
+  },
+  {
+    "id": "P_ADEPTH",
+    "min": 0,
+    "max": 127,
+    "cc": 25,
+    "description": ""
+  },
+  {
+    "id": "P_AFREQ",
+    "min": 0,
+    "max": 127,
+    "cc": 26,
+    "description": ""
+  },
+  {
+    "id": "P_ASHAPE",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_AWARP",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_BSCALE",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_BOFFSET",
+    "min": 0,
+    "max": 127,
+    "cc": 27,
+    "description": ""
+  },
+  {
+    "id": "P_BDEPTH",
+    "min": 0,
+    "max": 127,
+    "cc": 28,
+    "description": ""
+  },
+  {
+    "id": "P_BFREQ",
+    "min": 0,
+    "max": 127,
+    "cc": 29,
+    "description": ""
+  },
+  {
+    "id": "P_BSHAPE",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_BWARP",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_XSCALE",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_XOFFSET",
+    "min": 0,
+    "max": 127,
+    "cc": 78,
+    "description": ""
+  },
+  {
+    "id": "P_XDEPTH",
+    "min": 0,
+    "max": 127,
+    "cc": 77,
+    "description": ""
+  },
+  {
+    "id": "P_XFREQ",
+    "min": 0,
+    "max": 127,
+    "cc": 76,
+    "description": ""
+  },
+  {
+    "id": "P_XSHAPE",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_XWARP",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_YSCALE",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_YOFFSET",
+    "min": 0,
+    "max": 127,
+    "cc": 81,
+    "description": ""
+  },
+  {
+    "id": "P_YDEPTH",
+    "min": 0,
+    "max": 127,
+    "cc": 80,
+    "description": ""
+  },
+  {
+    "id": "P_YFREQ",
+    "min": 0,
+    "max": 127,
+    "cc": 79,
+    "description": ""
+  },
+  {
+    "id": "P_YSHAPE",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_YWARP",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_MIXSYNTH",
+    "min": 0,
+    "max": 127,
+    "cc": 7,
+    "description": ""
+  },
+  {
+    "id": "P_MIXWETDRY",
+    "min": 0,
+    "max": 127,
+    "cc": 8,
+    "description": ""
+  },
+  {
+    "id": "P_MIXHPF",
+    "min": 0,
+    "max": 127,
+    "cc": 21,
+    "description": ""
+  },
+  {
+    "id": "P_MIX_UNUSED",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_CV_QUANT",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_HEADPHONE",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_MIXINPUT",
+    "min": 0,
+    "max": 127,
+    "cc": 89,
+    "description": ""
+  },
+  {
+    "id": "P_MIXINWETDRY",
+    "min": 0,
+    "max": 127,
+    "cc": 90,
+    "description": ""
+  },
+  {
+    "id": "P_SYS_UNUSED1",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_SYS_UNUSED2",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_SYS_UNUSED3",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_SYS_UNUSED4",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  },
+  {
+    "id": "P_LAST",
+    "min": 0,
+    "max": 127,
+    "cc": -1,
+    "description": ""
+  }
+]
