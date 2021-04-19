@@ -2,7 +2,7 @@
   "name": "svelte-app",
   "version": "1.0.0",
   "scripts": {
-    "build": "rollup -c",
+    "build": "rollup -c && rm -rf docs && mkdir docs && cp -R public/* docs/.",
     "dev": "PORT=5005 rollup -c -w",
     "start": "sirv public"
   },

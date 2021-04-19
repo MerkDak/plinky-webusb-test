@@ -11,6 +11,7 @@ import {
   transition,
 } from 'robot3';
 
+import { EParams } from './params';
 import { MachineStore } from './MachineStore';
 import { PatchLoadMachine } from './PatchMachines';
 
@@ -46,6 +47,14 @@ export class USBPlinky extends Port {
 
 }
 
+function parseJSONFromPatch(patch) {
+  let JSONPatch = {};
+  EParams.forEach((param, index) => {
+    //JSONPatch[param] = 
+  });
+  return JSONPatch;
+}
+
 async function connect(ctx) {
   ctx.port = await Serial.requestPort(USBPlinky);
   await ctx.port.connect();
@@ -73,8 +82,9 @@ export function createPlinkyMachine(initialContext = {}) {
     loadPatch: invoke(
       patchLoadMachine,
       transition('done', 'connected', reduce((ctx, ev) => {
-        console.log('loadPatch done', ctx, ev);
-        return { ...ctx, patch: ev.data.result };
+        const patch = Uint8Array.from(Array.prototype.concat(...ev.data.result.map(a => Array.from(a))));
+        const patchJson = parseJSONFromPatch(patch);
+        return { ...ctx, patch };
       })),
       transition('error', 'error', reduce((ctx, ev) => {
         console.error(ctx, ev);
