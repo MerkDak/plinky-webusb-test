@@ -104,14 +104,18 @@ async function sendWriteRequest(ctx) {
   const len = new Uint8Array(arr);
   const buf = new Uint8Array([0xf3,0x0f,0xab,0xca,1,ctx.patchNumber,0,0,len[0],len[1]]);
   console.log('sending buf', buf, "ctx.bytesToProcess", ctx.bytesToProcess, "len.byteLength", len.byteLength, "len", len);
-  //ctx.port.send(buf);
+  ctx.port.send(buf);
   return true;
 }
 
-async function sendBytes(ctx, ev) {
-  const data = new Uint8Array(ctx.data.slice());
+const BUFFER_LENGTH = 64;
+
+async function sendBytes(ctx) {
+  const start = ctx.currentIteration * BUFFER_LENGTH;
+  const end = start + BUFFER_LENGTH;
+  const data = new Uint8Array(ctx.data).slice(start, end);
   ctx.port.send(data);
-  //ctx.result.push(data);
+  ctx.currentIteration++;
   ctx.processedBytes += data.byteLength;
   return ctx;
 }
@@ -120,8 +124,9 @@ export const PatchSaveMachine = {
   idle: state(
     immediate('setHeader', reduce(ctx => {
       const data = new Uint8Array(ctx.patch);
+      const currentIteration = 0;
       console.log('ctx', ctx, data.byteLength);
-      return { ...ctx, processedBytes: 0, bytesToProcess: data.byteLength, data } 
+      return { ...ctx, processedBytes: 0, bytesToProcess: data.byteLength, data, currentIteration } 
     })),
   ),
   setHeader: state(
