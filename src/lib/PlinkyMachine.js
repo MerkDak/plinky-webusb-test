@@ -12,12 +12,42 @@ import {
 } from 'robot3';
 
 import { MachineStore } from './MachineStore';
+import { Port } from './webusb/WebUSBPort';
 import { Serial } from './webusb/WebUSBSerial';
-import { WebUSBPlinky } from './webusb/WebUSBPlinky';
 import { patch2JSON } from './patch2JSON';
 
 const patchLoadMachine = createMachine(PatchLoadMachine, (ctx) => ({ ...ctx }));
 const patchSaveMachine = createMachine(PatchSaveMachine, (ctx) => ({ ...ctx }));
+
+class WebUSBPlinky extends Port {
+
+  onReceive(data) {
+    console.log('Port data:', data.buffer);
+    const { service } = PlinkyMachine;
+    if(service.child) {
+      service.child.send({
+        type: 'data',
+        data: data.buffer
+      });
+    }
+    else {
+      service.send({
+        type: 'data',
+        data: data.buffer
+      });
+    }
+  }
+
+  onReceiveError(error) {
+    console.error('Port error:', error);
+    const { send } = PlinkyMachine;
+    send({
+      type: 'error',
+      data: error
+    });
+  }
+
+}
 
 // ███╗   ███╗ █████╗  ██████╗██╗  ██╗██╗███╗   ██╗███████╗
 // ████╗ ████║██╔══██╗██╔════╝██║  ██║██║████╗  ██║██╔════╝
