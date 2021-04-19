@@ -14,6 +14,7 @@ import {
 import { EParams } from './params';
 import { MachineStore } from './MachineStore';
 import { PatchLoadMachine } from './PatchMachines';
+import { decode } from 'uint8-to-base64';
 
 const patchLoadMachine = createMachine(PatchLoadMachine, (ctx) => ({ ...ctx }));
 
@@ -93,7 +94,15 @@ export function createPlinkyMachine(initialContext = {}) {
 
   const states = {
     disconnected: state(
-      transition('connect', 'connecting')
+      transition('connect', 'connecting', reduce((ctx, ev) => {
+        if(ev.patch) {
+          const patch = ev.patch;
+          const arrayBuffer = patch.buffer.slice(patch.byteOffset, patch.byteLength + patch.byteOffset);
+          const patchJSON = parseJSONFromPatch(arrayBuffer);
+          return { ...ctx, patchJSON, patch: arrayBuffer }
+        }
+        return { ...ctx };
+      }))
     ),
     connecting: invoke(
       connect,
@@ -114,7 +123,7 @@ export function createPlinkyMachine(initialContext = {}) {
     clearPatch: state(
       immediate('connected', reduce((ctx) => {
         ctx.patch = null;
-        ctx.patchJSON = null;
+        ctx.patchJSON = {};
         return { ...ctx }
       }))
     ),
@@ -124,7 +133,7 @@ export function createPlinkyMachine(initialContext = {}) {
         const patch = Uint8Array.from(Array.prototype.concat(...ev.data.result.map(a => Array.from(a))));
         const arrayBuffer = patch.buffer.slice(patch.byteOffset, patch.byteLength + patch.byteOffset);
         const patchJSON = parseJSONFromPatch(arrayBuffer);
-        return { ...ctx, patch, patchJSON };
+        return { ...ctx, patch: arrayBuffer, patchJSON };
       })),
       transition('error', 'error', reduce((ctx, ev) => {
         return { ...ctx, error: ev.error };
@@ -149,6 +158,7 @@ export function createPlinkyMachine(initialContext = {}) {
   return MachineStore(machine, Object.assign(initialContext, {
     port: null,
     patch: null,
+    patchJSON: {}
   }));
 }
 

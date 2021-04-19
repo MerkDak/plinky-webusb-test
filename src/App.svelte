@@ -1,6 +1,7 @@
 <script>
 
 	import 'robot3/debug';
+	import { encode, decode } from 'uint8-to-base64';
 	import { onMount } from "svelte";
 	import { PlinkyMachine } from './lib/PlinkyMachine';
 
@@ -12,7 +13,21 @@
 	const { store, send, service } = PlinkyMachine;
 
 	async function connect() {
-		send('connect'); 
+		let params = (new URL(document.location)).searchParams;
+		let patch = params.get("p");
+		if(patch) {
+			const decodedPatch = decode(decodeURIComponent(patch));
+			console.log('patch: ', patch, decodedPatch);
+			send({
+				type: 'connect',
+				patch: decodedPatch
+			});
+		}
+		else {
+			send({
+				type: 'connect'
+			}); 
+		}
 	}
 
 	function loadPatch() {
@@ -26,6 +41,10 @@
 	}
 
 	function clearPatch() {
+		const uri = window.location.toString();
+		if (uri.indexOf("?") > 0) {
+			window.history.replaceState({}, document.title, uri.substring(0, uri.indexOf("?")));
+		}
 		send({
 			type: 'clearPatch'
 		});
@@ -43,6 +62,8 @@
 	$: connected = ['connected', 'loadPatch', 'savePatch'].indexOf($store.state) > -1;
 	$: disabled = ['loadPatch', 'savePatch'].indexOf($store.state) > -1;
 	$: error = ['error'].indexOf($store.state) > -1;
+
+	$: linkUrl = location.protocol+'//'+location.host+location.pathname+'?p='+encodeURIComponent(encode(new Uint8Array($store.context.patch)));
 
 	function round(num) {
 		return Math.round( num * 100 + Number.EPSILON ) / 100;
@@ -75,6 +96,9 @@
 		{#if $store.context.patch}
 
 			<button on:click|preventDefault={clearPatch}>Clear patch in browser memory</button>
+			
+			<label for="i-link-url">Link:</label>
+			<input value={linkUrl} id="i-link-url">
 
 			<p>Loaded: {$store.context.patch.byteLength} bytes</p>
 
