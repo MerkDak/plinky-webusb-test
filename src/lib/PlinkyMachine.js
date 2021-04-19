@@ -98,7 +98,10 @@ export function createPlinkyMachine(initialContext = {}) {
     connecting: invoke(
       connect,
       transition('done', 'connected'),
-      transition('error', 'disconnected')
+      transition('error', 'error', reduce((ctx, ev) => {
+        console.log(ev.error);
+        return { ...ctx, error: ev.error };
+      }))
     ),
     connected: state(
       transition('loadPatch', 'loadPatch', reduce((ctx, ev) => {
@@ -124,14 +127,16 @@ export function createPlinkyMachine(initialContext = {}) {
         return { ...ctx, patch, patchJSON };
       })),
       transition('error', 'error', reduce((ctx, ev) => {
-        console.error(ctx, ev);
-        return ctx;
+        return { ...ctx, error: ev.error };
       }))
     ),
     savePatch: state(
     ),
     error: state(
-      transition('disconnect', 'disconnected'),
+      transition('connect', 'connecting', reduce(ctx => {
+        ctx.error = null;
+        return { ...ctx };
+      })),
     )
   };
 

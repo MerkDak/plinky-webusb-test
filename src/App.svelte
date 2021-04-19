@@ -42,6 +42,7 @@
 
 	$: connected = ['connected', 'loadPatch', 'savePatch'].indexOf($store.state) > -1;
 	$: disabled = ['loadPatch', 'savePatch'].indexOf($store.state) > -1;
+	$: error = ['error'].indexOf($store.state) > -1;
 
 	function round(num) {
 		return Math.round( num * 100 + Number.EPSILON ) / 100;
@@ -53,6 +54,10 @@
 	<h1>Plinky WebUSB playground</h1>
 	<h2>Current state: {$store.state}</h2>
 
+	{#if error}
+		<p class="error">{$store.context.error}</p>
+	{/if}
+
 	<button style="display: {!connected ? 'block' : 'none'}" on:click={connect}>Connect</button>
 
 	<div style="display: {connected ? 'block' : 'none'}">
@@ -60,64 +65,64 @@
 		<input type="number" disabled={disabled} id="i-patch-number" bind:value={$store.context.patchNumber} />
 		<button disabled={disabled} on:click={loadPatch}>Load patch</button>
 		<button disabled={disabled} on:click={savePatch}>Save patch</button>
+
+		<h2>Current patch</h2>
+
+		{#if $store.context.patch}
+
+			<button on:click|preventDefault={clearPatch}>Clear patch in browser memory</button>
+
+			<p>Loaded: {$store.context.patch.byteLength} bytes</p>
+
+			<ul class="params">
+				{#each $store.context.patchJSON as param}
+					<li>
+						<h3>{param.name}</h3>
+						<div class="mods">
+							<table>
+								<tr>
+									<td>Base</td>
+									<td>{round(normalise(param.value))}%<br></td>
+								</tr>
+								<tr>
+									<td>Env</td>
+									<td>{round(normalise(param.mods.env))}%<br></td>
+								</tr>
+								<tr>
+									<td>Pressure</td>
+									<td>{round(normalise(param.mods.pressure))}%<br></td>
+								</tr>
+								<tr>
+									<td>A</td>
+									<td>{round(normalise(param.mods.a))}%<br></td>
+								</tr>
+							</table>
+							<table>
+								<tr>
+									<td>B</td>
+									<td>{round(normalise(param.mods.b))}%<br></td>
+								</tr>
+								<tr>
+									<td>X</td>
+									<td>{round(normalise(param.mods.x))}%<br></td>
+								</tr>
+								<tr>
+									<td>Y</td>
+									<td>{round(normalise(param.mods.y))}%<br></td>
+								</tr>
+								<tr>
+									<td>Random</td>
+									<td>{round(normalise(param.mods.random))}%<br></td>
+								</tr>
+							</table>
+						</div>
+					</li>
+				{/each}
+			</ul>
+		{:else}
+			<p>No patch in browser memory</p>
+		{/if}
 	</div>
-
-	<h2>Current patch</h2>
-
-	{#if $store.context.patch}
-
-		<button on:click|preventDefault={clearPatch}>Clear patch in browser memory</button>
-
-		<p>Loaded: {$store.context.patch.byteLength} bytes</p>
-
-		<ul class="params">
-			{#each $store.context.patchJSON as param}
-				<li>
-					<h3>{param.name}</h3>
-					<div class="mods">
-						<table>
-							<tr>
-								<td>Base</td>
-								<td>{round(normalise(param.value))}%<br></td>
-							</tr>
-							<tr>
-								<td>Env</td>
-								<td>{round(normalise(param.mods.env))}%<br></td>
-							</tr>
-							<tr>
-								<td>Pressure</td>
-								<td>{round(normalise(param.mods.pressure))}%<br></td>
-							</tr>
-							<tr>
-								<td>A</td>
-								<td>{round(normalise(param.mods.a))}%<br></td>
-							</tr>
-						</table>
-						<table>
-							<tr>
-								<td>B</td>
-								<td>{round(normalise(param.mods.b))}%<br></td>
-							</tr>
-							<tr>
-								<td>X</td>
-								<td>{round(normalise(param.mods.x))}%<br></td>
-							</tr>
-							<tr>
-								<td>Y</td>
-								<td>{round(normalise(param.mods.y))}%<br></td>
-							</tr>
-							<tr>
-								<td>Random</td>
-								<td>{round(normalise(param.mods.random))}%<br></td>
-							</tr>
-						</table>
-					</div>
-				</li>
-			{/each}
-		</ul>
-	{:else}
-		<p>No patch in browser memory</p>
-	{/if}
 
 </main>
 
