@@ -58,6 +58,10 @@
 		<p class="error">{$store.context.error}</p>
 	{/if}
 
+	{#if !connected}
+		<p>You need the 0.9l firmware (or newer) to use this!<br><a href="https://plinkysynth.com/firmware">Download here!</a></p>
+	{/if}
+
 	<button style="display: {!connected ? 'block' : 'none'}" on:click={connect}>Connect</button>
 
 	<div style="display: {connected ? 'block' : 'none'}">
