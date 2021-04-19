@@ -48,9 +48,27 @@ export class USBPlinky extends Port {
 }
 
 function parseJSONFromPatch(patch) {
-  let JSONPatch = {};
+  let JSONPatch = [];
+  // each parameter has 16 bytes;
+  // first 2 bytes are the value, then the 7 mod matrix amounts
   EParams.forEach((param, index) => {
-    //JSONPatch[param] = 
+    const len = 16;
+    const idx = index * len;
+    const buf = patch.slice(idx, len*index+len);
+    console.log(param, len, idx, "BUF", buf);
+    JSONPatch.push({
+      name: param,
+      value: buf[0]+buf[1],
+      mods: {
+        env:      buf[2]+buf[3],
+        pressure: buf[4]+buf[5],
+        a:        buf[6]+buf[7],
+        b:        buf[8]+buf[9],
+        x:        buf[10]+buf[11],
+        y:        buf[12]+buf[13],
+        random:   buf[14]+buf[15],
+      }
+    });
   });
   return JSONPatch;
 }
@@ -78,13 +96,21 @@ export function createPlinkyMachine(initialContext = {}) {
         return { ...ctx, patchNumber: ev.patchNumber };
       })),
       transition('savePatch', 'savePatch'),
+      transition('clearPatch', 'clearPatch'),
+    ),
+    clearPatch: state(
+      immediate('connected', reduce((ctx) => {
+        ctx.patch = null;
+        ctx.patchJSON = null;
+        return { ...ctx }
+      }))
     ),
     loadPatch: invoke(
       patchLoadMachine,
       transition('done', 'connected', reduce((ctx, ev) => {
         const patch = Uint8Array.from(Array.prototype.concat(...ev.data.result.map(a => Array.from(a))));
-        const patchJson = parseJSONFromPatch(patch);
-        return { ...ctx, patch };
+        const patchJSON = parseJSONFromPatch(patch);
+        return { ...ctx, patch, patchJSON };
       })),
       transition('error', 'error', reduce((ctx, ev) => {
         console.error(ctx, ev);

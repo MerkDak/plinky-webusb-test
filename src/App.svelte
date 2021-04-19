@@ -25,6 +25,12 @@
 	function savePatch() {
 	}
 
+	function clearPatch() {
+		send({
+			type: 'clearPatch'
+		});
+	}
+
 	$: connected = ['connected', 'loadPatch', 'savePatch'].indexOf($store.state) > -1;
 	$: disabled = ['loadPatch', 'savePatch'].indexOf($store.state) > -1;
 
@@ -46,7 +52,16 @@
 	<h2>Current patch</h2>
 
 	{#if $store.context.patch}
+
+		<button on:click|preventDefault={clearPatch}>Clear patch in browser memory</button>
+
 		<p>Loaded: {$store.context.patch.byteLength} bytes</p>
+
+		<ul>
+			{#each $store.context.patchJSON as param}
+				<li>{param.name} - {param.value}</li>
+			{/each}
+		</ul>
 	{:else}
 		<p>No patch in browser memory</p>
 	{/if}

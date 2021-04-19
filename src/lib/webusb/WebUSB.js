@@ -115,6 +115,7 @@ export class Port extends EventTarget {
     }
     catch(error) {
       console.error(error);
+      throw error;
     }
 
   }
