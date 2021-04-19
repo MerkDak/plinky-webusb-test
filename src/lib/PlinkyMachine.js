@@ -94,7 +94,9 @@ export function createPlinkyMachine(initialContext = {}) {
 
   const states = {
     disconnected: state(
-      transition('connect', 'connecting', reduce((ctx, ev) => {
+      transition('connect', 'connecting'),
+      transition('parsePatch', 'disconnected', reduce((ctx, ev) => {
+        console.log('foo', ev, ctx);
         if(ev.patch) {
           const patch = ev.patch;
           const arrayBuffer = patch.buffer.slice(patch.byteOffset, patch.byteLength + patch.byteOffset);

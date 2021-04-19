@@ -12,22 +12,33 @@
 
 	const { store, send, service } = PlinkyMachine;
 
-	async function connect() {
+	function compress(input) {
+		return input.split('').reduce((o, c) => {
+			if (o[o.length - 2] === c && o[o.length - 1] < 35) o[o.length - 1]++;
+			else o.push(c, 0);
+			return o;
+		},[]).map(_ => typeof _ === 'number' ? _.toString(36) : _).join('');
+	}
+
+	function decompress(input) {
+		return input.split('').map((c,i,a)=>i%2?undefined:new Array(2+parseInt(a[i+1],36)).join(c)).join('');
+	}
+
+	onMount(() => {
 		let params = (new URL(document.location)).searchParams;
 		let patch = params.get("p");
 		if(patch) {
-			const decodedPatch = decode(decodeURIComponent(patch));
+			const decodedPatch = decode(decompress(decodeURIComponent(patch)));
 			console.log('patch: ', patch, decodedPatch);
 			send({
-				type: 'connect',
+				type: 'parsePatch',
 				patch: decodedPatch
 			});
 		}
-		else {
-			send({
-				type: 'connect'
-			}); 
-		}
+	});
+
+	async function connect() {
+		send('connect');
 	}
 
 	function loadPatch() {
@@ -63,7 +74,7 @@
 	$: disabled = ['loadPatch', 'savePatch'].indexOf($store.state) > -1;
 	$: error = ['error'].indexOf($store.state) > -1;
 
-	$: linkUrl = location.protocol+'//'+location.host+location.pathname+'?p='+encodeURIComponent(encode(new Uint8Array($store.context.patch)));
+	$: linkUrl = location.protocol+'//'+location.host+location.pathname+'?p='+encodeURIComponent(compress(encode(new Uint8Array($store.context.patch))));
 
 	function round(num) {
 		return Math.round( num * 100 + Number.EPSILON ) / 100;
@@ -90,67 +101,67 @@
 		<input type="number" disabled={disabled} id="i-patch-number" bind:value={$store.context.patchNumber} />
 		<button disabled={disabled} on:click={loadPatch}>Load patch</button>
 		<button disabled={disabled} on:click={savePatch}>Save patch</button>
-
-		<h2>Current patch</h2>
-
-		{#if $store.context.patch}
-
-			<button on:click|preventDefault={clearPatch}>Clear patch in browser memory</button>
-			
-			<label for="i-link-url">Link:</label>
-			<input value={linkUrl} id="i-link-url">
-
-			<p>Loaded: {$store.context.patch.byteLength} bytes</p>
-
-			<ul class="params">
-				{#each $store.context.patchJSON as param}
-					<li>
-						<h3>{param.name}</h3>
-						<div class="mods">
-							<table>
-								<tr>
-									<td>Base</td>
-									<td>{round(normalise(param.value))}%<br></td>
-								</tr>
-								<tr>
-									<td>Env</td>
-									<td>{round(normalise(param.mods.env))}%<br></td>
-								</tr>
-								<tr>
-									<td>Pressure</td>
-									<td>{round(normalise(param.mods.pressure))}%<br></td>
-								</tr>
-								<tr>
-									<td>A</td>
-									<td>{round(normalise(param.mods.a))}%<br></td>
-								</tr>
-							</table>
-							<table>
-								<tr>
-									<td>B</td>
-									<td>{round(normalise(param.mods.b))}%<br></td>
-								</tr>
-								<tr>
-									<td>X</td>
-									<td>{round(normalise(param.mods.x))}%<br></td>
-								</tr>
-								<tr>
-									<td>Y</td>
-									<td>{round(normalise(param.mods.y))}%<br></td>
-								</tr>
-								<tr>
-									<td>Random</td>
-									<td>{round(normalise(param.mods.random))}%<br></td>
-								</tr>
-							</table>
-						</div>
-					</li>
-				{/each}
-			</ul>
-		{:else}
-			<p>No patch in browser memory</p>
-		{/if}
 	</div>
+
+	<h2>Current patch</h2>
+
+	{#if $store.context.patch}
+
+		<button on:click|preventDefault={clearPatch}>Clear patch in browser memory</button>
+		
+		<label for="i-link-url">Link:</label>
+		<input value={linkUrl} id="i-link-url">
+
+		<p>Loaded: {$store.context.patch.byteLength} bytes</p>
+
+		<ul class="params">
+			{#each $store.context.patchJSON as param}
+				<li>
+					<h3>{param.name}</h3>
+					<div class="mods">
+						<table>
+							<tr>
+								<td>Base</td>
+								<td>{round(normalise(param.value))}%<br></td>
+							</tr>
+							<tr>
+								<td>Env</td>
+								<td>{round(normalise(param.mods.env))}%<br></td>
+							</tr>
+							<tr>
+								<td>Pressure</td>
+								<td>{round(normalise(param.mods.pressure))}%<br></td>
+							</tr>
+							<tr>
+								<td>A</td>
+								<td>{round(normalise(param.mods.a))}%<br></td>
+							</tr>
+						</table>
+						<table>
+							<tr>
+								<td>B</td>
+								<td>{round(normalise(param.mods.b))}%<br></td>
+							</tr>
+							<tr>
+								<td>X</td>
+								<td>{round(normalise(param.mods.x))}%<br></td>
+							</tr>
+							<tr>
+								<td>Y</td>
+								<td>{round(normalise(param.mods.y))}%<br></td>
+							</tr>
+							<tr>
+								<td>Random</td>
+								<td>{round(normalise(param.mods.random))}%<br></td>
+							</tr>
+						</table>
+					</div>
+				</li>
+			{/each}
+		</ul>
+	{:else}
+		<p>No patch in browser memory</p>
+	{/if}
 
 </main>
 
