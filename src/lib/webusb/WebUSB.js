@@ -96,10 +96,10 @@ export class Port extends EventTarget {
 
       try {
         // ??? leftover?
-        await this.device.selectAlternateInterface(this.interfaceNumber, 0);
+        await this.device.selectAlternateInterface(this.interfaceNumber, this.endpointIn);
       }
       catch(err) {
-        console.error('BOO!!! this.device.selectAlternateInterface() failed');
+        //console.error('BOO!!! this.device.selectAlternateInterface() failed');
       }
 
       await this.device.controlTransferOut({

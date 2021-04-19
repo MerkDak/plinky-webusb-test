@@ -1,20 +1,11 @@
-import {
-  Machine,
-  SendFunction,
-  action,
-  createMachine,
-  guard,
-  immediate,
-  interpret,
-  reduce,
-  state,
-  transition,
-} from 'robot3';
-import { Writable, writable } from 'svelte/store';
+import { interpret } from 'robot3';
+import { writable } from 'svelte/store';
 
 /**
  * Wrap an FSM in a Svelte store
- * @param machine Robot3 state machine
+ * @param {Machine} machine - Robot3 state machine
+ * @param {any} initialContext - Initial context for machine
+ * @returns {[Writable<any>, function, Service<any>]}
  */
 export const MachineStore = (
   machine,
@@ -22,13 +13,10 @@ export const MachineStore = (
 ) => {
   const service = interpret(
     machine,
-    (_service) => {
+    _service => {
       if(service === _service) {
-        console.log('state', _service.machine.current, 'context', _service.context);
+        console.log('[MachineStore] state', _service.machine.current, 'context', _service.context);
         store.set({ state: _service.machine.current, context: _service.context });
-      }
-      else {
-        // this is an inner state machine
       }
     },
     initialContext,
@@ -41,5 +29,5 @@ export const MachineStore = (
 
   const send = service.send;
 
-  return [store, send, machine];
+  return { store, send, service };
 };

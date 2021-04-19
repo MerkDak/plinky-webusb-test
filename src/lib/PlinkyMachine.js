@@ -1,6 +1,5 @@
+import { Port, Serial } from './webusb/WebUSB';
 import {
-  Machine,
-  SendFunction,
   action,
   createMachine,
   guard,
@@ -11,79 +10,76 @@ import {
   state,
   transition,
 } from 'robot3';
-import { Port, Serial } from './webusb/WebUSB';
 
-import { IRLPlinky } from './webusb/IRLPlinky';
 import { MachineStore } from './MachineStore';
-import { createPatchReceivingMachine } from './PatchMachine';
+import { PatchLoadMachine } from './PatchMachines';
 
-export function createPlinkyMachine(data = {}) {
+const patchLoadMachine = createMachine(PatchLoadMachine, (ctx) => ({ ...ctx }));
 
-  async function connect(ctx) {
-  
-    try {
-      ctx.port = await Serial.requestPort(IRLPlinky);
-      ctx.port.connect();
-      //ctx.listener = ctx.port.addEventListener('data', dataListener);
-      return ctx;
+export class USBPlinky extends Port {
+
+  onReceive(data) {
+    console.log('Port data:', data.buffer);
+    const { service } = PlinkyMachine;
+    if(service.child) {
+      service.child.send({
+        type: 'data',
+        data: data.buffer
+      });
     }
-    catch(err) {
-      console.error(err);
-      throw err;
+    else {
+      service.send({
+        type: 'data',
+        data: data.buffer
+      });
     }
   }
 
-  function isConnected(ctx) {
-    return ctx && !!ctx.port;
-  }
-
-  async function loadPatch(ctx) {
-
-    let waiting = true;
-
-    function machineIsFinished() {
-      waiting = false;
-    }
-
-    const patchMachine = createPatchReceivingMachine({
-      patchNumber: ctx.patchNumber,
-      port: ctx.port
+  onReceiveError(error) {
+    console.error('Port error:', error);
+    const { send } = PlinkyMachine;
+    send({
+      type: 'error',
+      data: error
     });
-
-    console.log('loadPatch created patchMachine', patchMachine);
-
-    const listener = ctx.port.addEventListener('data', (data) => {
-      console.log('loadPatch data event', data);
-      //patchMachine.context();
-      patchMachine.send('data');
-    });
-
-    console.log('created listener', listener, ctx.port, ctx.port.addEventListener);
-
-    console.log("loadPatch", patchMachine);
-
-    // [0xf3,0x0f,0xab,0xca,  0,   32,             0,0,0,0 ]
-    //  header                get  current preset  padding 
-    ctx.port.send(new Uint8Array([0xf3,0x0f,0xab,0xca,0,ctx.patchNumber,0,0,0,0]));
-    return patchMachine;
-
   }
+
+}
+
+async function connect(ctx) {
+  ctx.port = await Serial.requestPort(USBPlinky);
+  await ctx.port.connect();
+  return ctx;
+}
+
+export function createPlinkyMachine(initialContext = {}) {
 
   const states = {
-    disconnected: state(transition('connect', 'connecting')),
+    disconnected: state(
+      transition('connect', 'connecting')
+    ),
     connecting: invoke(
-      connect, 
-      transition('done', 'connected', guard(isConnected)),
-      transition('error', 'error'),
+      connect,
+      transition('done', 'connected'),
+      transition('error', 'disconnected')
     ),
     connected: state(
-      transition('load', 'loadPatch'),
-      transition('save', 'savePatch'),
+      transition('loadPatch', 'loadPatch', reduce((ctx, ev) => {
+        console.log('ctx', ctx, ev);
+        return { ...ctx, patchNumber: ev.patchNumber };
+      })),
+      transition('savePatch', 'savePatch'),
     ),
     loadPatch: invoke(
-      loadPatch,
-      transition('done', 'connected', guard(isConnected)),
-      transition('error', 'error')
+      patchLoadMachine,
+      transition('done', 'connected', reduce((ctx, ev) => {
+        console.log('loadPatch done', ctx, ev);
+        return { ...ctx, patch: ev.data.result };
+      })),
+      transition('error', 'error', reduce((ctx, ev) => {
+        console.error(ctx, ev);
+        return ctx;
+      }))
     ),
     savePatch: state(
     ),
@@ -96,13 +92,14 @@ export function createPlinkyMachine(data = {}) {
     return { ...ctx };
   };
 
-  const initialContext = Object.assign(data, {
-    patchNumber: 0,
-    patch: null,
-    queue: []
-  });
-
   const machine = createMachine(states, context);
 
-  return MachineStore(machine, initialContext);
+  return MachineStore(machine, Object.assign(initialContext, {
+    port: null,
+    patch: null,
+  }));
 }
+
+export const PlinkyMachine = createPlinkyMachine({
+  patchNumber: 0,
+});

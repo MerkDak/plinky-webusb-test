@@ -27,9 +27,8 @@ catch(err) {
 
 ### `Port` class
 
-The `Port` superclass handles:
+The `Port` superclass, in the `connect()` function, handles:
 
-In the `connect()` function:
 - Defining the read loop
 - Opening the device
 - Setting the [endpoint](https://wicg.github.io/webusb/#endpoints)
@@ -47,6 +46,18 @@ The `WebUSBPlinky` class implements:
 - `onReceive`
 - `onReceiveError`
 
-### `WebPlinky` class
+### `PlinkyManager` class
 
-This class handles the abstraction and finite state machine to interface with Plinky through `WebUSBPlinky`. It is used to wire up the UI to the machine.
+This class contains the abstraction and state machine (`PlinkyMachine`) to interface with Plinky through `WebUSBPlinky`. It is used to wire up the UI to the machine.
+
+`PlinkyMachine` has these states:
+
+- disconnected
+- connecting
+- connected
+- loadPatch
+- savePatch
+- error
+
+They should be pretty self-explanatory. The loadPatch and savePatch states invoke their own sub-machines, so you can keep track of the overall state easier. Look at the `PlinkyManager` to see how to interface with it.
+
