@@ -4,6 +4,7 @@
 	import { encode, decode } from 'uint8-to-base64';
 	import { onMount } from "svelte";
 	import { PlinkyMachine } from './lib/PlinkyMachine';
+import { state } from 'robot3';
 
 	let port;
 	let inref;
@@ -84,6 +85,10 @@
 		return Math.round( num * 100 + Number.EPSILON ) / 100;
 	}
 
+	function selectBankItem(num) {
+		console.log(num);
+	}
+
 </script>
 
 <main>
@@ -101,15 +106,34 @@
 	<button style="display: {!connected ? 'block' : 'none'}" on:click={connect}>Connect</button>
 
 	<div style="display: {connected ? 'block' : 'none'}">
-		<label for="i-patch-number">Patch number</label>
-		<input type="number" disabled={disabled} id="i-patch-number" bind:value={$store.context.patchNumber} />
+		<h2>Patch</h2>
+		<p>Per-patch operations - you can load and save patches on the device.</p>
+		<label for="i-patch-number">Patch number (zero index, 0-31)</label>
+		<input min="0" max="32" type="number" disabled={disabled} id="i-patch-number" bind:value={$store.context.patchNumber} />
 		<button disabled={disabled} on:click={loadPatch}>Load patch</button>
 		<button disabled={disabled} on:click={savePatch}>Save patch</button>
+
+		<!--
+		<h2>Bank</h2>
+
+		<button on:click|preventDefault={clearPatch}>Load full bank</button>
+
+		<h3>Load patch to browser memory from bank:</h3>
+		<div class="bank">
+
+			{#each $store.context.bank as bankItem}
+				<button on:click|preventDefault={selectBankItem(bankItem.number)}>{bankItem.number+1}</button>
+			{/each}
+			
+		</div>
+		-->
 	</div>
 
 	<h2>Current patch</h2>
 
 	{#if $store.context.patch}
+
+		<p>This is the patch that has been loaded into the browser's memory.</p>
 
 		<button on:click|preventDefault={clearPatch}>Clear patch in browser memory</button>
 
@@ -117,7 +141,7 @@
 		
 		<h3>Link to patch</h3>
 		<label for="i-link-url">Link:</label>
-		<input value={linkUrl} id="i-link-url">
+		<input class="link" value={linkUrl} id="i-link-url">
 
 		<h3>Params</h3>
 
@@ -133,8 +157,10 @@
 				<li>
 					<h3>{param.name}</h3>
 					<code>
-						hex: {Array.from(new Uint8Array(param.buffer)).map(a=> a.toString(16))}<br>
-						dec: {new Uint8Array(param.buffer).toString()}
+						id: {param.id}<br>
+						val {param.value}<br>
+						hex {Array.from(new Uint8Array(param.buffer)).map(a=> a.toString(16))}<br>
+						dec {new Uint8Array(param.buffer).toString()}
 					</code>
 					<div class="mods">
 						<table>
@@ -173,6 +199,9 @@
 								<td>{round(normalise(param.mods.random))}%<br></td>
 							</tr>
 						</table>
+					</div>
+					<div class="description">
+						<p>{param.description}</p>
 					</div>
 				</li>
 			{/each}
@@ -221,6 +250,17 @@
 		font-size: 14px;
 		line-height: 18px;
 		border-bottom: 1px solid #efefef;
+	}
+	.params .description {
+		padding: 0 16px 16px;
+	}
+	.link {
+		width: 480px;
+	}
+	.params .description p {
+		margin: 0;
+		font-size: 12px;
+		line-height: 16px;
 	}
 	main {
 		padding: 1em;

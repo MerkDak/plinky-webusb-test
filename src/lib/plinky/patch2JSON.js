@@ -1,4 +1,11 @@
-import { EParams } from './params';
+import { EParams, PlinkyParams } from './params';
+
+function getParam(id) {
+  console.log(PlinkyParams);
+  return PlinkyParams.find(param => {
+    return param.id === id;
+  });
+}
 
 export function patch2JSON(patch) {
   let patchJSON = {
@@ -21,19 +28,22 @@ export function patch2JSON(patch) {
     // without having to do messy bit operations by hand! woot!
     const arr = new Int16Array(buf);
     //console.log(param, len, idx, "BUF", buf, arr);
+    const plinkyParam = getParam(param) || { name: param };
     patchJSON.params.push({
-      name: param,
-      buffer:     buf,
-      value:      arr[0],
-      enum:       null,
+      id:           param,
+      name:         plinkyParam.name,
+      description:  plinkyParam.description,
+      buffer:       buf,
+      value:        arr[0],
+      enum:         null,
       mods: {
-        env:      arr[1],
-        pressure: arr[2],
-        a:        arr[3],
-        b:        arr[4],
-        x:        arr[5],
-        y:        arr[6],
-        random:   arr[7],
+        env:        arr[1],
+        pressure:   arr[2],
+        a:          arr[3],
+        b:          arr[4],
+        x:          arr[5],
+        y:          arr[6],
+        random:     arr[7],
       }
     });
   });

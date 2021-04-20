@@ -11,13 +11,21 @@ import {
   transition,
 } from 'robot3';
 
-// ██╗      ██████╗  █████╗ ██████╗ 
-// ██║     ██╔═══██╗██╔══██╗██╔══██╗
-// ██║     ██║   ██║███████║██║  ██║
-// ██║     ██║   ██║██╔══██║██║  ██║
-// ███████╗╚██████╔╝██║  ██║██████╔╝
-// ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═════╝ 
+const USB_BUFFER_SIZE = 64;
 
+// ██╗      ██████╗  █████╗ ██████╗     ██████╗  █████╗ ████████╗ ██████╗██╗  ██╗
+// ██║     ██╔═══██╗██╔══██╗██╔══██╗    ██╔══██╗██╔══██╗╚══██╔══╝██╔════╝██║  ██║
+// ██║     ██║   ██║███████║██║  ██║    ██████╔╝███████║   ██║   ██║     ███████║
+// ██║     ██║   ██║██╔══██║██║  ██║    ██╔═══╝ ██╔══██║   ██║   ██║     ██╔══██║
+// ███████╗╚██████╔╝██║  ██║██████╔╝    ██║     ██║  ██║   ██║   ╚██████╗██║  ██║
+// ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═════╝     ╚═╝     ╚═╝  ╚═╝   ╚═╝    ╚═════╝╚═╝  ╚═╝
+
+/**
+ * Get the header from data event from WebUSBPlinky
+ * @param {*} ctx - State machine context
+ * @param {*} ev - Data event from WebUSBPlinky
+ * @returns {*} - New state machine context
+ */
 function getHeader(ctx, ev) {
   const data = new Uint8Array(ev.data);
   // Keep all results in an array until the end, when we can concat them all into a single ArrayBuffer
@@ -34,8 +42,13 @@ function getHeader(ctx, ev) {
   return ctx;
 }
 
+/**
+ * Check if an event has a header for loading a patch.
+ * @param {*} ctx - State machine context
+ * @param {*} ev - Data event from WebUSBPlinky
+ * @returns {Boolean} - True if correct header is present in event data
+ */
 function hasHeader(ctx, ev) {
-  console.log('hasHeader', ctx, ev);
   const data = new Uint8Array(ev.data);
   if(!data) return false;
   if(data.byteLength !== 10) return false;
@@ -49,6 +62,12 @@ function hasHeader(ctx, ev) {
   return true;
 }
 
+/**
+ * Read incoming bytes and add them to the result
+ * @param {*} ctx - State machine context
+ * @param {*} ev - Data event from WebUSBPlinky
+ * @returns {*} - State machine context with data added to result
+ */
 function readBytes(ctx, ev) {
   const data = new Uint8Array(ev.data);
   ctx.result.push(data);
@@ -56,10 +75,20 @@ function readBytes(ctx, ev) {
   return ctx;
 }
 
-function hasMoreData(ctx) {
+/**
+ * Check if state machine should continue to process bytes
+ * @param {*} ctx - State machine context
+ * @returns {Boolean} - True if all bytes have been processed
+ */
+function hasNoMoreData(ctx) {
   return ctx.processedBytes >= ctx.bytesToProcess;
 }
 
+/**
+ * Send a packet asking to load a patch from Plinky
+ * @param {*} ctx - State machine context
+ * @returns {Boolean} - True when sent
+ */
 async function sendLoadRequest(ctx) {
   console.log('sendLoadRequest', ctx.port, 'patchNumber', ctx.patchNumber);
   // [0xf3,0x0f,0xab,0xca,  0,   32,             0,0,0,0 ]
@@ -69,7 +98,10 @@ async function sendLoadRequest(ctx) {
   return true;
 }
 
-export const PatchLoadMachine = {
+/**
+ * Loading state machine
+ */
+export const PatchLoadMachine = createMachine({
   idle: state(
     immediate('getHeader', action(sendLoadRequest)),
   ),
@@ -80,19 +112,24 @@ export const PatchLoadMachine = {
     immediate('read', reduce(getHeader))
   ),
   read: state(
-    immediate('finished', guard(hasMoreData)),
+    immediate('finished', guard(hasNoMoreData)),
     transition('data', 'read', reduce(readBytes)),
   ),
   finished: final()
-};
+}, (ctx) => ({ ...ctx }));
 
-// ███████╗ █████╗ ██╗   ██╗███████╗
-// ██╔════╝██╔══██╗██║   ██║██╔════╝
-// ███████╗███████║██║   ██║█████╗  
-// ╚════██║██╔══██║╚██╗ ██╔╝██╔══╝  
-// ███████║██║  ██║ ╚████╔╝ ███████╗
-// ╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝
+// ███████╗ █████╗ ██╗   ██╗███████╗    ██████╗  █████╗ ████████╗ ██████╗██╗  ██╗
+// ██╔════╝██╔══██╗██║   ██║██╔════╝    ██╔══██╗██╔══██╗╚══██╔══╝██╔════╝██║  ██║
+// ███████╗███████║██║   ██║█████╗      ██████╔╝███████║   ██║   ██║     ███████║
+// ╚════██║██╔══██║╚██╗ ██╔╝██╔══╝      ██╔═══╝ ██╔══██║   ██║   ██║     ██╔══██║
+// ███████║██║  ██║ ╚████╔╝ ███████╗    ██║     ██║  ██║   ██║   ╚██████╗██║  ██║
+// ╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝    ╚═╝     ╚═╝  ╚═╝   ╚═╝    ╚═════╝╚═╝  ╚═╝
 
+/**
+ * Send a header asking to write a patch to Plinky
+ * @param {*} ctx - State machine context
+ * @returns {Boolean} - True when sent
+ */
 async function sendWriteRequest(ctx) {
   console.log('sendWriteRequest', ctx.port, 'patchNumber', ctx.patchNumber);
   // [0xf3,0x0f,0xab,0xca,  1,   32,             0,0,0,0 ]
@@ -103,29 +140,34 @@ async function sendWriteRequest(ctx) {
   view.setUint32(0, ctx.bytesToProcess, true);
   const len = new Uint8Array(arr);
   const buf = new Uint8Array([0xf3,0x0f,0xab,0xca,1,ctx.patchNumber,0,0,len[0],len[1]]);
-  console.log('sending buf', buf, "ctx.bytesToProcess", ctx.bytesToProcess, "len.byteLength", len.byteLength, "len", len);
+  console.log('sending buffer', buf, "ctx.bytesToProcess", ctx.bytesToProcess, "len.byteLength", len.byteLength, "len", len);
   ctx.port.send(buf);
   return true;
 }
 
-const BUFFER_LENGTH = 64;
-
+/**
+ * Send bytes to Plinky
+ * @param {*} ctx - State machine context
+ * @returns {*} - New state machine context
+ */
 async function sendBytes(ctx) {
-  const start = ctx.currentIteration * BUFFER_LENGTH;
-  const end = start + BUFFER_LENGTH;
-  const data = new Uint8Array(ctx.data).slice(start, end);
+  const start = ctx.currentIteration * USB_BUFFER_SIZE;
+  const end = start + USB_BUFFER_SIZE;
+  const data = ctx.data.slice(start, end);
   ctx.port.send(data);
   ctx.currentIteration++;
   ctx.processedBytes += data.byteLength;
   return ctx;
 }
 
-export const PatchSaveMachine = {
+/**
+ * Saving state machine
+ */
+export const PatchSaveMachine = createMachine({
   idle: state(
     immediate('setHeader', reduce(ctx => {
       const data = new Uint8Array(ctx.patch);
       const currentIteration = 0;
-      console.log('ctx', ctx, data.byteLength);
       return { ...ctx, processedBytes: 0, bytesToProcess: data.byteLength, data, currentIteration } 
     })),
   ),
@@ -138,8 +180,53 @@ export const PatchSaveMachine = {
     }))
   ),
   write: state(
-    immediate('finished', guard(hasMoreData)),
+    immediate('finished', guard(hasNoMoreData)),
     immediate('getDataFromPatch', action(sendBytes)),
   ),
   finished: final()
-}
+}, (ctx) => ({ ...ctx }));
+
+// ██╗      ██████╗  █████╗ ██████╗     ██████╗  █████╗ ███╗   ██╗██╗  ██╗
+// ██║     ██╔═══██╗██╔══██╗██╔══██╗    ██╔══██╗██╔══██╗████╗  ██║██║ ██╔╝
+// ██║     ██║   ██║███████║██║  ██║    ██████╔╝███████║██╔██╗ ██║█████╔╝ 
+// ██║     ██║   ██║██╔══██║██║  ██║    ██╔══██╗██╔══██║██║╚██╗██║██╔═██╗ 
+// ███████╗╚██████╔╝██║  ██║██████╔╝    ██████╔╝██║  ██║██║ ╚████║██║  ██╗
+// ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═════╝     ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝
+
+/**
+ * Bank loading machine
+ */
+export const BankLoadMachine = createMachine({
+  // 1. Initial state
+  // Set the patch number to 0 and create an empty bank in this context.
+  idle: state(
+    immediate('sendHeader', reduce((ctx) => {
+      ctx.patchNumber = 0;
+      ctx.bank = [];
+      return { ...ctx };
+    })),
+  ),
+  // 2. Load state
+  // Use the PatchLoadMachine to 
+  sendHeader: state(
+    immediate('getHeader', action(sendLoadRequest)),
+  ),
+  getHeader: state(
+    transition('data', 'header', guard(hasHeader)),
+  ),
+  header: state(
+    immediate('read', reduce(getHeader))
+  ),
+  read: state(
+    immediate('finished', guard(hasNoMoreData)),
+    transition('data', 'read', reduce(readBytes)),
+  ),
+  nextPatch: state(
+    //immediate('finished', guard(hasNoMorePatches)),
+    immediate('sendHeader', reduce((ctx) => {
+      ctx.patchNumber = ctx.patchNumber + 1;
+      return { ...ctx };
+    })),
+  ),
+  finished: final()
+}, (ctx) => ({ ...ctx }));
