@@ -90,6 +90,9 @@ export function createPlinkyMachine(initialContext = {}) {
       )),
       transition('savePatch', 'savePatch'),
       transition('clearPatch', 'clearPatch'),
+      transition('error', 'error', reduce((ctx, ev) => {
+        return { ...ctx, error: ev.error };
+      }))
     ),
     clearPatch: state(
       immediate('connected', reduce((ctx) => {
