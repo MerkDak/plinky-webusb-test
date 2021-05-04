@@ -109,7 +109,7 @@ export const PlinkyParams = [
     "offset": 0,
     "cc": 13,
     "name": "Shape",
-    "description": "Controls the shape of the oscillators in Plinky. When exactly 0%, you get a supersaw: 4 sawtooths per voice. When positive, you blend smoothly through 16 ROM wavetable shapes provided by @miunau. When negative, you get PWM control of pulse/square shapes."
+    "description": "Controls the shape of the oscillators in Plinky. When exactly 0%, you get 4 sawtooths per voice. When positive, you blend smoothly through 16 ROM wavetable shapes, (2 per voice,) provided by @miunau. When negative, you get PWM control of pulse/square shapes, (also 2 per voice.) CV and internal modulation only work either positive or negative: you can blend through the wavetables when the parameter is over 0, or you can modulate pulse/square waves when the value is negative. You cant cross through zero. Plinky pans each set of oscillators, (and the sample grains) a little giving the sound a rich stereo field. With the 4 saws at position 0, we have 2 oscilators panned left and 2 panned right. With the wavetable and pulse oscilators 1 is panned left and 1 is panned right."
   },
   {
     "id": "P_DRIVE",
@@ -302,7 +302,7 @@ export const PlinkyParams = [
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "unused parameter slot"
   },
   {
     "id": "P_ENV_LEVEL",
@@ -349,7 +349,7 @@ export const PlinkyParams = [
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "unused parameter slot"
   },
   {
     "id": "P_DLSEND",
@@ -447,7 +447,7 @@ export const PlinkyParams = [
     "min": 0,
     "max": 1,
     "cc": -1,
-    "description": ""
+    "description": "unused parameter slot"
   },
   {
     "id": "P_SWING",
@@ -624,342 +624,342 @@ export const PlinkyParams = [
     "min": 0,
     "max": 127,
     "cc": 11,
-    "description": ""
+    "description": "Sets the length of the gate of each step. The gate is the signal that determines whether a note is on or off. Longer gates means notes are played longer, which (in tandem with Envelope 1) determines how long notes are sustained."
   },
   {
     "id": "P_SMP_POS",
     "min": 0,
     "max": 127,
     "cc": 15,
-    "description": ""
+    "description": "Controls the starting point of the sample playback, relative to the slice point. If you modulate this parameter you get dynamic slicing."
   },
   {
     "id": "P_SMP_GRAINSIZE",
     "min": 0,
     "max": 127,
     "cc": 16,
-    "description": ""
+    "description": "Sets the size of the grains. Modulate to achieve granular sound effects."
   },
   {
     "id": "P_SMP_RATE",
     "min": 0,
     "max": 127,
     "cc": 17,
-    "description": ""
+    "description": "Determines at what relative speed the sample is played back, eg. 50% slows the sample down by a factor of 2, 200% speeds up the sample twice. Playback speed affects the pitch of the sample accordingly, slowing the sample down pitches it down, speeding up also pitches up."
   },
   {
     "id": "P_SMP_TIME",
     "min": 0,
     "max": 127,
     "cc": 18,
-    "description": ""
+    "description": "Determines at what relative speed the sample is played back, but without changing the pitch. As the sample is cut up in miniscule ‘grains’ of audio (milliseconds), Plinky repeats some of these grains to slow down, and leaves some grains out to speed up. Changes in grain size have more drastic effects when samples are stretched severely. "
   },
   {
     "id": "P_SAMPLE",
     "min": 0,
     "max": 127,
     "cc": 82,
-    "description": ""
+    "description": "Controls which sample is being played, allowing you to change samples from within a preset by assigning a LFO or CV source to this parameter."
   },
   {
     "id": "P_SEQPAT",
     "min": 0,
     "max": 127,
     "cc": 83,
-    "description": ""
+    "description": "Controls which sequencer pattern is being played back, allowing you to change patterns from within a preset by assigning an LFO or CV source to this parameter. If you add a slow rising saw to this parameter you can chain various patterns together. "
   },
   {
     "id": "P_JIT_POS",
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "Adds an amount of randomness to the sample playback position."
   },
   {
     "id": "P_JIT_GRAINSIZE",
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "Adds an amount of randomness to the sample grain size."
   },
   {
     "id": "P_JIT_RATE",
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "Adds an amount of randomness to the sample playback speed."
   },
   {
     "id": "P_JIT_PULSE",
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "unused parameter slot"
   },
   {
     "id": "P_JIT_UNUSED",
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "unused parameter slot"
   },
   {
     "id": "P_SEQSTEP",
     "min": 0,
     "max": 127,
     "cc": 85,
-    "description": ""
+    "description": "Offsets the starting point of the sequencer pattern allowing for variations in sequencer playback."
   },
   {
     "id": "P_ASCALE",
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "An attenuator for the signal coming from the corresponding CV input jacks."
   },
   {
     "id": "P_AOFFSET",
     "min": 0,
     "max": 127,
     "cc": 24,
-    "description": ""
+    "description": "Offsets the CV and/or LFO. This is a constant voltage that is being added (or subtracted) from the sum of the CV input and the LFO."
   },
   {
     "id": "P_ADEPTH",
     "min": 0,
     "max": 127,
     "cc": 25,
-    "description": ""
+    "description": "Attenuator for the internal LFO's.The default value is zero so turn this up for LFO's."
   },
   {
     "id": "P_AFREQ",
     "min": 0,
     "max": 127,
     "cc": 26,
-    "description": ""
+    "description": "Controls the rate of the internal LFO. The LFO rates can range from 20 sceonds (at +100%) to milliseconds at -100%."
   },
   {
     "id": "P_ASHAPE",
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "Sets the shape of the LFO. The following shapes are available; Triangle, Sine, SmthRnd (Smooth Random), StepRnd (Stepped Random), BiSquare (Bipolar Square wave), Square (Unipolar Square wave), Castle (looks like a sandcastle), BiTrigs (Bipolar Trigger pulses), Trigs (Unipolar Trigger Pulses), Env."
   },
   {
     "id": "P_AWARP",
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "Sets the slope of the LFO shape - for example turning a triangle wave into a sharp ramp up (symmetry +100) or down (symmetry -100). "
   },
   {
     "id": "P_BSCALE",
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "An attenuator for the signal coming from the corresponding CV input jacks."
   },
   {
     "id": "P_BOFFSET",
     "min": 0,
     "max": 127,
     "cc": 27,
-    "description": ""
+    "description": "Offsets the CV and/or LFO. This is a constant voltage that is being added (or subtracted) from the sum of the CV input and the LFO."
   },
   {
     "id": "P_BDEPTH",
     "min": 0,
     "max": 127,
     "cc": 28,
-    "description": ""
+    "description": "Attenuator for the internal LFO's.The default value is zero so turn this up for LFO's."
   },
   {
     "id": "P_BFREQ",
     "min": 0,
     "max": 127,
     "cc": 29,
-    "description": ""
+    "description": "Controls the rate of the internal LFO. The LFO rates can range from 20 sceonds (at +100%) to milliseconds at -100%."
   },
   {
     "id": "P_BSHAPE",
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "Sets the shape of the LFO. The following shapes are available; Triangle, Sine, SmthRnd (Smooth Random), StepRnd (Stepped Random), BiSquare (Bipolar Square wave), Square (Unipolar Square wave), Castle (looks like a sandcastle), BiTrigs (Bipolar Trigger pulses), Trigs (Unipolar Trigger Pulses), Env."
   },
   {
     "id": "P_BWARP",
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "Sets the slope of the LFO shape - for example turning a triangle wave into a sharp ramp up (symmetry +100) or down (symmetry -100). "
   },
   {
     "id": "P_XSCALE",
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "An attenuator for the signal coming from the corresponding CV input jacks."
   },
   {
     "id": "P_XOFFSET",
     "min": 0,
     "max": 127,
     "cc": 78,
-    "description": ""
+    "description": "Offsets the CV and/or LFO. This is a constant voltage that is being added (or subtracted) from the sum of the CV input and the LFO."
   },
   {
     "id": "P_XDEPTH",
     "min": 0,
     "max": 127,
     "cc": 77,
-    "description": ""
+    "description": "Attenuator for the internal LFO's.The default value is zero so turn this up for LFO's."
   },
   {
     "id": "P_XFREQ",
     "min": 0,
     "max": 127,
     "cc": 76,
-    "description": ""
+    "description": "Controls the rate of the internal LFO. The LFO rates can range from 20 sceonds (at +100%) to milliseconds at -100%."
   },
   {
     "id": "P_XSHAPE",
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "Sets the shape of the LFO. The following shapes are available; Triangle, Sine, SmthRnd (Smooth Random), StepRnd (Stepped Random), BiSquare (Bipolar Square wave), Square (Unipolar Square wave), Castle (looks like a sandcastle), BiTrigs (Bipolar Trigger pulses), Trigs (Unipolar Trigger Pulses), Env."
   },
   {
     "id": "P_XWARP",
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "Sets the slope of the LFO shape - for example turning a triangle wave into a sharp ramp up (symmetry +100) or down (symmetry -100). "
   },
   {
     "id": "P_YSCALE",
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "An attenuator for the signal coming from the corresponding CV input jacks."
   },
   {
     "id": "P_YOFFSET",
     "min": 0,
     "max": 127,
     "cc": 81,
-    "description": ""
+    "description": "Offsets the CV and/or LFO. This is a constant voltage that is being added (or subtracted) from the sum of the CV input and the LFO."
   },
   {
     "id": "P_YDEPTH",
     "min": 0,
     "max": 127,
     "cc": 80,
-    "description": ""
+    "description": "Attenuator for the internal LFO's.The default value is zero so turn this up for LFO's."
   },
   {
     "id": "P_YFREQ",
     "min": 0,
     "max": 127,
     "cc": 79,
-    "description": ""
+    "description": "Controls the rate of the internal LFO. The LFO rates can range from 20 sceonds (at +100%) to milliseconds at -100%."
   },
   {
     "id": "P_YSHAPE",
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "Sets the shape of the LFO. The following shapes are available; Triangle, Sine, SmthRnd (Smooth Random), StepRnd (Stepped Random), BiSquare (Bipolar Square wave), Square (Unipolar Square wave), Castle (looks like a sandcastle), BiTrigs (Bipolar Trigger pulses), Trigs (Unipolar Trigger Pulses), Env."
   },
   {
     "id": "P_YWARP",
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "Sets the slope of the LFO shape - for example turning a triangle wave into a sharp ramp up (symmetry +100) or down (symmetry -100). "
   },
   {
     "id": "P_MIXSYNTH",
     "min": 0,
     "max": 127,
     "cc": 7,
-    "description": ""
+    "description": "Sets the gain level of Plinky's synth / sampler. Above 50% you will start hitting a limiter, which can help to glue patches with wide dynamic range together. You can use this as a volume control if you are taking audio from the left / mono output."
   },
   {
     "id": "P_MIXWETDRY",
     "min": 0,
     "max": 127,
     "cc": 8,
-    "description": ""
+    "description": "Sets the balance between the dry signal of Plinky's voice (synth or sampler) and the wet signal of the Reverb and Delay units (the distortion/saturation device is applied directly to the 8 individual voices.) The default setting is zero where there is an equal mix of wet and dry signals. 100 is completely wet and -100 is completely dry."
   },
   {
     "id": "P_MIXHPF",
     "min": 0,
     "max": 127,
     "cc": 21,
-    "description": ""
+    "description": "After the synth/sampler, external audio and the effects are mixed, they pass through a High Pass Filter. This parameter controls the cut off frequency."
   },
   {
     "id": "P_MIX_UNUSED",
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "unused parameter slot"
   },
   {
     "id": "P_CV_QUANT",
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "Plinky’s pitch input is most useful when you have a sequence or latched note playing; the pitch is transposed according to the pitch CV input (1 volt per octave), and you can use this last parameter to choose if the transposition is unquantized, quantized to semitones, or transposed in-scale. 0v (C0) means no transposition."
   },
   {
     "id": "P_HEADPHONE",
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "Sets the level of the final output stage for the headphone out. Turn this up to 11."
   },
   {
     "id": "P_MIXINPUT",
     "min": 0,
     "max": 127,
     "cc": 89,
-    "description": ""
+    "description": "Sets the gain level of Plinky's inputs. These inputs take line level signals and amplify them to Eurorack levels, but... If you feed it eurorack level, the analog saturation unit in Plinky V2 does it's thing. In case both the inputs on the face plate and the front/back side are used, Plinky mixes the inputs at fixed levels."
   },
   {
     "id": "P_MIXINWETDRY",
     "min": 0,
     "max": 127,
     "cc": 90,
-    "description": ""
+    "description": "Sets the balance between the dry signal of the audio inputs and the wet signal passing through the Reverb and Delay units."
   },
   {
     "id": "P_SYS_UNUSED1",
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "unused parameter slot"
   },
   {
     "id": "P_SYS_UNUSED2",
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "unused parameter slot"
   },
   {
     "id": "P_SYS_UNUSED3",
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "unused parameter slot"
   },
   {
     "id": "P_SYS_UNUSED4",
     "min": 0,
     "max": 127,
     "cc": -1,
-    "description": ""
+    "description": "unused parameter slot"
   }
 ];
